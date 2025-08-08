@@ -13,6 +13,7 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 env_name = 'MountainCar-v0' 
 # env_name = 'CartPole-v1'
 
+# 환경 생성
 env = gym.make(env_name)
 
 # 하이퍼파라미터 설정
@@ -28,7 +29,10 @@ e_end = 0.05  # 입실론 최종값
 e_decay = 200  # 입실론 감소율
 
 target_nn_update_frequency = 10  # 타겟 네트워크 업데이트 주기
-clip_error = False  # 오차 클리핑 여부
+
+# 렌더링 관련 하이퍼파라미터
+render_episodes = 10  # 렌더링할 에피소드 수
+render_start_episode = 290  # 렌더링을 시작할 에피소드 번호 (더 일찍 시작) 
 
 device = "cpu"
 
@@ -125,13 +129,20 @@ start_time = time.time()
 
 # 에피소드 루프
 for episode in range(num_episodes):
-    if episode > num_episodes * 0.98:
-        env = gym.make(env_name, render_mode="human")
+    # 렌더링 여부 결정
+    should_render = episode >= render_start_episode
+    
+    if should_render:
+        # 렌더링을 위한 환경 생성
+        render_env = gym.make(env_name, render_mode="human")
+        s, _ = render_env.reset()
+        print(f"🎬 Rendering episode {episode} - 렌더링 창이 열렸습니다!")
     else:
-        env = gym.make(env_name)
+        s, _ = env.reset()
+        if episode % 50 == 0:  # 50 에피소드마다 진행상황 출력
+            print(f"📊 Episode {episode}/{num_episodes} 진행 중...")
 
-    s, _ = env.reset()
-    reward = 0
+    episode_reward = 0
     while True:
         total_steps += 1
 
@@ -139,9 +150,12 @@ for episode in range(num_episodes):
         a = select_action(s, total_steps)
 
         # 환경에서 액션 수행
-        s_, r, terminated, truncated, _ = env.step(a)
+        if should_render:
+            s_, r, terminated, truncated, _ = render_env.step(a)
+        else:
+            s_, r, terminated, truncated, _ = env.step(a)
         done = terminated or truncated
-        reward += r
+        episode_reward += r
 
         # 리플레이 메모리에 경험 저장
         memory.push(s, a, s_, r, done)
@@ -155,7 +169,7 @@ for episode in range(num_episodes):
             states = torch.Tensor(states).to(device)
             actions = torch.LongTensor(actions).to(device)
             new_states = torch.Tensor(new_states).to(device)
-            rewards = torch.Tensor([rewards]).to(device)
+            rewards = torch.Tensor(rewards).to(device)  # 차원 수정
             dones = torch.Tensor(dones).to(device)
             
             # 타겟 Q 네트워크로부터 새로운 상태의 Q 값 계산
@@ -183,15 +197,27 @@ for episode in range(num_episodes):
         s = s_
 
         if done:
-            reward_history.append(reward)
-            print(f"{episode} episode finished after {reward:.2f} rewards")
+            reward_history.append(episode_reward)
+            print(f"{episode} episode finished after {episode_reward:.2f} rewards")
             break
+
+    # 렌더링 환경이 생성된 경우 닫기
+    if should_render:
+        render_env.close()
+        print(f"🔒 Episode {episode} 렌더링 창을 닫았습니다.")
+
+# 환경 닫기
+env.close()
 
 # 평균 보상 출력
 print("Average rewards: %.2f" % (sum(reward_history)/num_episodes))
 
 # 마지막 50 에피소드의 평균 보상 출력
-print("Average of last 100 episodes: %.2f" % (sum(reward_history[-50:])/50))
+last_episodes = 50
+if len(reward_history) >= last_episodes:
+    print(f"Average of last {last_episodes} episodes: %.2f" % (sum(reward_history[-last_episodes:])/last_episodes))
+else:
+    print(f"Average of all {len(reward_history)} episodes: %.2f" % (sum(reward_history)/len(reward_history)))
 
 # 하이퍼파라미터 정보 출력
 print("---------------------- Hyper parameters --------------------------------------")
@@ -200,16 +226,30 @@ print(
 print(f"replay_memory: {replay_memory_size}, batch size: {batch_size}")
 print(f"epsilon_start: {e_start}, epsilon_end: {e_end}, " +
       f"epsilon_decay: {e_decay}")
-print(
-    f"update frequency: {target_nn_update_frequency}, clipping: {clip_error}")
+print(f"update frequency: {target_nn_update_frequency}")
 
 # 경과 시간 출력
 elapsed_time = time.time() - start_time
 print(f"Time Elapsed : {elapsed_time//60} min {elapsed_time%60:.0} sec")
 
 # 학습 과정의 보상 플롯
-plt.bar(torch.arange(len(reward_history)).numpy(), reward_history)
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.bar(range(len(reward_history)), reward_history, alpha=0.6)
 plt.xlabel("episodes")
 plt.ylabel("rewards")
-plt.title("DQN - Target Network")
+plt.title("DQN - Target Network (Individual Episodes)")
+
+# 이동 평균 플롯 추가
+plt.subplot(1, 2, 2)
+window_size = 20
+if len(reward_history) >= window_size:
+    moving_avg = [sum(reward_history[i:i+window_size])/window_size 
+                  for i in range(len(reward_history)-window_size+1)]
+    plt.plot(range(window_size-1, len(reward_history)), moving_avg, 'r-', linewidth=2)
+    plt.xlabel("episodes")
+    plt.ylabel("moving average rewards")
+    plt.title(f"Moving Average (window={window_size})")
+
+plt.tight_layout()
 plt.show()

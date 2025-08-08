@@ -1,3 +1,6 @@
+# FrozenLake 환경 시각화 예제
+# FrozenLake는 얼어있는 호수에서 시작점(S)에서 목표점(G)까지 도달하는 강화학습 환경입니다
+
 import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
@@ -62,7 +65,7 @@ for i in range(n_games):
         average = np.mean(scores[-10:])  # 마지막 10게임의 평균 점수 계산
         win_pct.append(average)   # 평균 점수를 win_pct 리스트에 추가
 
-env.close()
+env.close()  # 환경 종료
 
 # 그래프 그리기
 plt.plot(win_pct)

@@ -67,18 +67,49 @@ for n_episode in range(num_episodes):
         # 모든 a에 대해:
         # a = A* 이면 pi(a|S_t) <- 1-e + e/|A(S_t)|
         # a != A* 이면 pi(a|S_t) <- e/|A(St)|
-        for a in range(num_actions):
-            if a == A_star:
-                pi[s][a] = 1 - e + e/num_actions
+        for action_idx in range(num_actions):
+            if action_idx == A_star:
+                pi[s][action_idx] = 1 - e + e/num_actions
             else:
-                pi[s][a] = e/num_actions
+                pi[s][action_idx] = e/num_actions
                 
     if n_episode % 1000 == 0:
         print(f"{n_episode}번째 에피소드 완료")
 
+print("=== 학습 과정 전체 승리/패배 비율 ===")
 print("승리 비율 = {:.2f}%".format(win/num_episodes*100))
 print("패배 비율 = {:.2f}%".format(lose/num_episodes*100))
 print("무승부 비율 = {:.2f}%".format(draw/num_episodes*100))
+
+# 학습 완료 후 최적 정책 평가
+print("\n=== 최적 정책 평가 중... ===")
+win_optimal = 0
+lose_optimal = 0
+draw_optimal = 0
+num_eval_episodes = 10000
+
+for _ in range(num_eval_episodes):
+    s, _ = env.reset()
+    while True:
+        # 최적 정책 사용 (ε=0, 즉 greedy policy)
+        optimal_action = np.argmax(Q[s])
+        s_, r, terminated, truncated, _ = env.step(optimal_action)
+        
+        if terminated or truncated:
+            if r == 1:
+                win_optimal += 1
+            elif r == -1:
+                lose_optimal += 1
+            else:
+                draw_optimal += 1
+            break
+        s = s_
+
+print("=== 최적 정책 평가 결과 ===")
+print("승리 비율 = {:.2f}%".format(win_optimal/num_eval_episodes*100))
+print("패배 비율 = {:.2f}%".format(lose_optimal/num_eval_episodes*100))
+print("무승부 비율 = {:.2f}%".format(draw_optimal/num_eval_episodes*100))
+print("평균 보상 = {:.3f}".format((win_optimal - lose_optimal)/num_eval_episodes))
 
 #특정 상태(state)에서 가능한 모든 행동(actions)의 값 중에서 가장 큰 값(최적의 행동 가치)을 찾고, 
 #그 값을 그 상태의 가치 함수 값으로 설정

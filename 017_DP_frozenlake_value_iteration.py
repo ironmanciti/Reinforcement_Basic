@@ -12,7 +12,7 @@ GAMMA = 0.95
 THETA = 1e-5
 num_states = env.observation_space.n
 num_actions = env.action_space.n
-transitions = env.P
+transitions = env.unwrapped.P
 
 # 1. 모든 s에 대해 V(s) = 0으로 초기화
 V = np.zeros(num_states)

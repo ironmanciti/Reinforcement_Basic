@@ -24,7 +24,7 @@ GAMMA = 0.9
 THETA = 1e-7
 num_states = env.observation_space.n
 num_actions = env.action_space.n
-transitions = env.P
+transitions = env.unwrapped.P
 
 # 1. 모든 s에 대해 V(s) = 0과 임의의 pi(s)를 초기화
 V = np.zeros(num_states)

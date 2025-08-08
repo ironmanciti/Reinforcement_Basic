@@ -22,6 +22,13 @@ SLIPPERY = False  # 결정론적 환경
 # map_name: 사용할 맵의 이름을 지정합니다. 
 # is_slippery: True이면 미끄러운 표면(확률적 환경)을 사용하고, False이면 결정론적 환경을 사용합니다.
 
+
+
+
+
+
+
+
 # 환경의 동역학 출력
 #pprint.pprint(transitions)
 

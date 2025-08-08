@@ -46,41 +46,43 @@ for n_episode in range(num_episodes):
         
                 
 
-print("승리 비율 = {:.2f}%".format(win/num_episodes*100))
+print("=== 학습 과정 전체 승리/패배 비율 ===")
+
+
+
+
+# 학습 완료 후 최적 정책 평가
+
+
+
+
+
+
+
+
+
+print("=== 최적 정책 평가 결과 ===")
+
+
 
 #특정 상태(state)에서 가능한 모든 행동(actions)의 값 중에서 가장 큰 값(최적의 행동 가치)을 찾고,
 #그 값을 그 상태의 가치 함수 값으로 설정
 V = defaultdict(float)
 for state, actions in Q.items():
+    pass
+
 
 
 # 예측
 sample_state = (21, 3, True)
+# 해당 상태에서 최적의 행동을 찾음
+
+# 상태의 가치 값을 소수점 두 자리까지 출력하고, 최적의 행동이 'stick'인지 'hit'인지 출력
 
 
-X, Y = np.meshgrid(
-    np.arange(1, 11),    # dealer가 open 한 카드
-    np.arange(12, 22))   # player가 가진 카드 합계
+
+
+
 
 # V[(player가 가진 카드 합계, dealer 오픈 카드, 유용한 에이스 보유)]
-no_usable_ace = np.apply_along_axis(lambda idx: V[(idx[1], idx[0], False)],
-                                    2, np.dstack([X, Y]))
-usable_ace = np.apply_along_axis(lambda idx: V[(idx[1], idx[0], True)],
-                                 2, np.dstack([X, Y]))
 
-fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(12, 3),
-                               subplot_kw={'projection': '3d'})
-
-ax0.plot_surface(X, Y, no_usable_ace, cmap=plt.cm.YlGnBu_r)
-ax0.set_xlabel('Player Cards')
-ax0.set_ylabel('Dealer open Cards')
-ax0.set_zlabel('MC Estimated Value')
-ax0.set_title('No Useable Ace')
-
-ax1.plot_surface(X, Y, usable_ace, cmap=plt.cm.YlGnBu_r)
-ax1.set_xlabel('Player Cards')
-ax1.set_ylabel('Dealer open Cards')
-ax1.set_zlabel('MC Estimated Value')
-ax1.set_title('Useable Ace')
-
-plt.show()

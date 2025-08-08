@@ -27,7 +27,7 @@ GAMMA = 1.0  # 감가율 (discount factor), 미래 보상의 현재 가치
 THETA = 1e-5   # 정책 평가의 종료 조건, 변화가 이 값보다 작으면 평가 종료
 num_states = env.observation_space.n   # 환경의 상태(state) 개수
 num_actions = env.action_space.n    # 환경에서 가능한 행동(action) 개수
-transitions = env.P   # 상태-행동 전이 확률 (state-action transition probabilities)
+transitions = env.unwrapped.P   # 상태-행동 전이 확률 (state-action transition probabilities)
 # 환경의 동역학 출력
 #pprint.pprint(transitions)
 

@@ -30,16 +30,17 @@ import os
 """
 
 
+
 # 알고리즘의 파라미터 설정: 스텝 사이즈 alpha (0, 1], 0 보다 큰 작은 탐색률 e 
 
 
 # Q(s,a)를 초기화
 
 
-# 각 에피소드를 위한 반복문
+#Loop for each episode:
 for episode in range(n_episodes):
-
     # 에피소드를 초기화
+    
 
     # 각 에피소드의 각 스텝에 대한 반복문
     while True:
@@ -66,16 +67,25 @@ for episode in range(n_episodes):
 
 
 
-
-    if episode % 100 == 0:
-        print(
-            f"최근 100 episode 평균 score = {np.mean(scores[-100:])}, 평균 step = {np.mean(steps[-100:])}")
-
-# 각 에피소드별 단계 수 그래프 그리기
+    # 평균 계산
+    if episode % 100 == 0 and episode > 0:
+        pass
 
 
-# 각 에피소드별 점수 그래프 그리기
+
+# 렌더링을 5번 연속으로 실행
 
 
-# epsilon decay history 그래프 그리기
 
+
+
+# 그래프 생성 및 저장
+
+# 각 에피소드별 단계 수 그래프
+
+
+# 각 에피소드별 점수 그래프
+
+
+
+# epsilon decay history 그래프

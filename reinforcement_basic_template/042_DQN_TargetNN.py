@@ -19,6 +19,11 @@ env = gym.make(env_name)
 
 
 
+# 렌더링 관련 하이퍼파라미터
+
+
+
+
 # 리플레이 메모리 클래스
 class ExperienceReplay:
     def __init__(self, capacity):
@@ -47,10 +52,9 @@ def select_action(state, steps_done):
   
     return action
 
-# 리플레이 메모리 초기화
 
 
-# 타겟 Q함수 초기화 (랜덤 가중치)
+
 
 
 # 리플레이 메모리 초기화
@@ -80,9 +84,11 @@ def select_action(state, steps_done):
 
 # 에피소드 루프
 for episode in range(num_episodes):
+    # 마지막 5% 에피소드에서만 렌더링
+    
 
-    s, _ = env.reset()
-    reward = 0
+
+
     while True:
         total_steps += 1
 
@@ -101,6 +107,9 @@ for episode in range(num_episodes):
                 batch_size)
 
             # 샘플링한 데이터를 텐서로 변환하여 장치에 할당
+            
+            
+            
             
             # 타겟 Q 네트워크로부터 새로운 상태의 Q 값 계산
 
@@ -136,4 +145,8 @@ for episode in range(num_episodes):
 
 
 # 학습 과정의 보상 플롯
+
+
+
+# 이동 평균 플롯 추가
 

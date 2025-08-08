@@ -1,3 +1,6 @@
+# FrozenLake 환경 시각화 예제
+# FrozenLake는 얼어있는 호수에서 시작점(S)에서 목표점(G)까지 도달하는 강화학습 환경입니다
+
 import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
@@ -29,7 +32,7 @@ with_policy = True  # 간단한 결정론적 정책 사용
 SLIPPERY = False  # 결정론적 환경
 #SLIPPERY = True  # 확률적 환경
 
-# FrozenLake-v1 환경을 생성합니다.
+# FrozenLake-v1 환경을 생성하고 화면에 렌더링하세요 (render_mode="human" 사용)
 # desc: None이면 기본 맵을 사용합니다.
 # map_name: 사용할 맵의 이름을 지정합니다. 여기서는 "4x4" 맵을 사용합니다.
 # is_slippery: True이면 미끄러운 표면(확률적 환경)을 사용하고, False이면 결정론적 환경을 사용합니다.
@@ -39,16 +42,31 @@ SLIPPERY = False  # 결정론적 환경
 
 # 게임 진행
 for i in range(n_games):
-    
+    # 게임 종료 상태 초기화
+    # 환경을 초기 상태로 리셋
+    # 점수 초기화
     
     while not terminated and not truncated:
-
-       
-    
-
         
+        # 정책에 따라 행동을 선택하세요 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        # 10게임마다 평균 계산
 
 
+# 환경을 종료하세요
 
 # 그래프 그리기
+
+# 성공률이나 보상 등의 통계를 시각화하세요 
 

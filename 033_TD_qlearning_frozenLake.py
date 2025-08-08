@@ -15,7 +15,7 @@ from collections import defaultdict
 GAMMA = 0.99
 ALPHA = 0.9
 epsilon = 0.3
-n_episodes = 20_000
+n_episodes = 50_000  # 에피소드 수 증가
 
 is_slippery = False
 
@@ -34,10 +34,12 @@ Q = defaultdict(lambda: np.zeros(num_actions))
 for episode in range(n_episodes):
     #전체 episode의 99.9%가 지나면 렌더링
     if episode > n_episodes * 0.999:
-        env = gym.make('FrozenLake-v1', is_slippery=is_slippery,
-                       render_mode="human")
-    # 에피소드를 초기화
-    s, _ = env.reset()
+        # 렌더링을 위한 별도 환경 생성
+        render_env = gym.make('FrozenLake-v1', is_slippery=is_slippery, render_mode="human")
+        s, _ = render_env.reset()
+    else:
+        s, _ = env.reset()
+    
     # Loop for each step of episode:
     score = 0
     while True:
@@ -49,7 +51,10 @@ for episode in range(n_episodes):
             a = np.argmax(Q[s])  # 가장 큰 Q값을 가지는 행동 선택
 
         # 행동 A를 취하고, R, S'을 관찰
-        s_, r, terminated, truncated, _ = env.step(a)
+        if episode > n_episodes * 0.999:
+            s_, r, terminated, truncated, _ = render_env.step(a)
+        else:
+            s_, r, terminated, truncated, _ = env.step(a)
         score += r
 
         # Q(S,A)를 업데이트: Q(S,A) <- Q(S,A) + alpha[R + gamma*max_aQ(S',a) - Q(S, A)]
@@ -66,7 +71,8 @@ for episode in range(n_episodes):
 
     scores.append(score)
 
-    if episode % 1000 and episode > 0.8 * n_episodes:
+    # 1000의 배수이고 전체의 80% 이후일 때만 계산
+    if episode % 1000 == 0 and episode > 0.8 * n_episodes:
         average = np.mean(scores[-10:])
         win_pct.append(average)
 
@@ -74,12 +80,15 @@ print("Stochastic" if is_slippery else "Deterministic")
 print("GAMMA = {}, epsilon = {}, ALPHA = {}".format(GAMMA, epsilon, ALPHA))
 
 # 학습 결과 시각화
-plt.plot(win_pct)
-plt.xlabel('episode')
-plt.ylabel('success ratio')
-plt.title('average success ratio of last 10 games\n - {}'
-          .format('Stochastic Env' if is_slippery else 'Deterministic Env'))
-plt.show()
+if win_pct:  # win_pct가 비어있지 않을 때만 플롯
+    plt.plot(win_pct)
+    plt.xlabel('episode')
+    plt.ylabel('success ratio')
+    plt.title('average success ratio of last 10 games\n - {}'
+              .format('Stochastic Env' if is_slippery else 'Deterministic Env'))
+    plt.show()
+else:
+    print("win_pct 데이터가 없습니다. 더 많은 에피소드를 실행하거나 조건을 조정하세요.")
 
 # 최적 정책 출력
 WIDTH = 4

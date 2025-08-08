@@ -24,7 +24,7 @@ from collections import defaultdict
 for episode in range(n_episodes):
     #전체 episode의 99.9%가 지나면 렌더링
 
-    # 에피소드를 초기화
+
 
     # Loop for each step of episode:
 
@@ -43,16 +43,21 @@ for episode in range(n_episodes):
         # 에피소드가 끝나면 반복문 종료
 
 
+
+
         # 상태 업데이트
 
 
-
+    # 1000의 배수이고 전체의 80% 이후일 때만 계산
     if episode % 1000 and episode > 0.8 * n_episodes:
+        pass
 
 
 
 
 # 학습 결과 시각화
+
+
 
 
 # 최적 정책 출력
