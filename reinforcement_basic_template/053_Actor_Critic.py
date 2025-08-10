@@ -11,18 +11,36 @@ import time
 
 device = torch.device('cuda:0' if torch.cuda.is_available()
                       else 'cpu')  # CUDA 장치를 사용 가능하면 사용, 아니면 CPU 사용
-print(device)
+print(f"Using device: {device}")
 
 #env_name = 'CartPole-v1'  # 환경 이름 설정
-env_name = 'LunarLander-v2'
+env_name = 'LunarLander-v3'
 env = gym.make(env_name)  # 환경 생성
 
 n_actions = env.action_space.n  # 가능한 액션의 수를 설정
-action_space = np.arange(env.action_space.n)  # 가능한 액션의 범위 설정
 
-print(n_actions)
+print(f"Number of actions: {n_actions}")
 
 # 정책 네트워크 (pi(a|s,theta))와 가치 네트워크 (v(s,w))를 포함한 Actor-Critic 클래스
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -33,20 +51,34 @@ print(n_actions)
 # 에피소드의 최대 개수 N 설정
 
 
-batch_size = 32
 # theta 매개변수와 가치 가중치 w 초기화
 
 
 
-# batch를 만드는 함수
+
+
+# episode 단위로 batch를 만드는 함수
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 # 각 에피소드에 대해
 for episode in range(N):
-    if episode > N * 0.995:
-        env = gym.make(env_name, render_mode='human')
+    # 마지막 에피소드에서 렌더링
+    
+    
 
     # 첫 상태 초기화
     
@@ -70,15 +102,21 @@ for episode in range(N):
 
             # delta <- R + gamma * v(S',w) - v(S,w) (만약 S'가 종료 상태라면 v(S',w) = 0)
             
-            
             # advantage = reward + gamma * v(S',w) - v(S,w) --> advantage = delta
             
 
             # w <- w + alpha * delta * gradient(v(S,w)) - 가치 네트워크 매개변수 업데이트
             # theta <- theta + alpha * I * delta * gradient(pi(A|S,theta)) - 정책 네트워크 매개변수 업데이트
             
+            # Actor loss (정책 손실)
             
-            # loss = -1 * policy.logprob(action) * advantage + critic loss
+            # Critic loss (가치 손실)
+            
+            
+            # 전체 손실
+            
+            
+            # 그래디언트 클리핑 추가 (안정성 향상)
             
             
             
@@ -86,3 +124,12 @@ for episode in range(N):
     if episode % 100 == 0:
         avg_score = np.mean(total_rewards[-100:])
         print(f'episode {episode},  최근 100 episode 평균 reward {avg_score: .2f}')
+
+
+# 결과 시각화
+
+# 보상 그래프
+
+
+
+# 에피소드 길이 그래프
